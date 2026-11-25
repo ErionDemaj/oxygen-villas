@@ -1,0 +1,1563 @@
+
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oxygen Villas</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #101e30;
+    color: white;
+    font: 15px system-ui, sans-serif;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+button, input, select, textarea {
+    font: inherit;
+    border-radius: 8px;
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+}
+
+button {
+    cursor: pointer;
+    border: 0;
+}
+
+button.gold, .active {
+    background: #dfbb78 !important;
+    color: #101e30 !important;
+    font-weight: bold;
+}
+
+input, select, textarea {
+    width: 100%;
+}
+
+label {
+    display: block;
+    margin: 12px 0 5px;
+    font-weight: 600;
+}
+
+/* LOGIN */
+
+#login {
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(
+        ellipse at top,
+        #29425c,
+        #101e30 70%
+    );
+    padding: 20px;
+}
+
+.login-card {
+    width: min(380px, 100%);
+    padding: 30px;
+    background: #17283d;
+    border: 1px solid #dfbb78;
+    border-radius: 24px;
+}
+
+.brand {
+    color: #dfbb78;
+    letter-spacing: 4px;
+    margin: 0;
+}
+
+.login-card h1,
+.login-card p {
+    text-align: center;
+}
+
+.login-card input {
+    background: #20334b;
+    color: white;
+}
+
+.login-card button {
+    width: 100%;
+    margin-top: 18px;
+}
+
+/* HEADER */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    flex-wrap: wrap;
+}
+
+header small {
+    color: #b9c7d8;
+}
+
+/* KALENDARI */
+
+main {
+    display: flex;
+    gap: 14px;
+    padding: 0 14px 14px;
+}
+
+aside {
+    width: 170px;
+    flex-shrink: 0;
+}
+
+aside button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    color: white;
+    margin: 3px 0;
+}
+
+aside select {
+    background: #20334b;
+    color: #dfbb78;
+}
+
+section {
+    flex: 1;
+    min-width: 0;
+    background: #f5f7fb;
+    color: #172234;
+    border-radius: 18px;
+    padding: 16px;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+h2 {
+    margin: 0;
+}
+
+.legend {
+    font-size: 12px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+.scroll {
+    overflow: auto;
+    max-height: 75vh;
+    margin-top: 16px;
+}
+
+table {
+    border-spacing: 3px;
+    width: 100%;
+    min-width: 920px;
+    table-layout: fixed;
+}
+
+th {
+    background: #172b43;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    height: 42px;
+    border-radius: 6px;
+}
+
+th:first-child,
+td.date {
+    width: 72px;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+}
+
+th:first-child {
+    z-index: 3;
+}
+
+td {
+    height: 43px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+    padding: 4px;
+}
+
+td.date {
+    background: #dce3ed;
+    font-weight: bold;
+}
+
+.free {
+    background: #c9edcc;
+}
+
+.booked {
+    background: #f39a9a;
+    color: #631b24;
+}
+
+.pending {
+    background: #f9d66d;
+    color: #614500;
+}
+
+td:not(.date) {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* FORMULARI */
+
+dialog {
+    border: 0;
+    border-radius: 18px;
+    padding: 22px;
+    width: min(420px, 94vw);
+    max-height: 90dvh;
+    overflow: auto;
+    color: #172234;
+}
+
+dialog::backdrop {
+    background: #0009;
+}
+
+.dates {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr;
+    gap: 7px;
+}
+
+.dates small {
+    display: block;
+    color: #64748b;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.actions button {
+    flex: 1;
+}
+
+.danger {
+    background: #a92935;
+    color: white;
+}
+
+.error {
+    color: #d34b55;
+    white-space: pre-wrap;
+}
+
+#nights {
+    background: #e7edf4;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+#connection {
+    font-size: 12px;
+    color: #52647a;
+}
+
+/* TELEFONI */
+
+@media(max-width: 700px) {
+
+    header {
+        padding: 15px;
+    }
+
+    main {
+        display: block;
+        padding: 0 8px 8px;
+    }
+
+    aside {
+        width: 100%;
+        display: flex;
+        overflow: auto;
+        gap: 5px;
+        padding-bottom: 10px;
+    }
+
+    aside select {
+        width: 90px;
+        flex-shrink: 0;
+    }
+
+    aside button {
+        width: auto;
+        white-space: nowrap;
+        margin: 0;
+    }
+
+    section {
+        padding: 10px;
+    }
+
+    table {
+        min-width: 800px;
+    }
+
+    input, select, textarea {
+        font-size: 16px;
+    }
+
+    .scroll {
+        max-height: 70vh;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="login">
+
+    <form id="loginForm" class="login-card">
+
+        <h1 class="brand">OXYGEN</h1>
+
+        <p style="letter-spacing:7px">VILLAS</p>
+
+        <p>Reservation Management</p>
+
+        <label for="username">
+            Emri i përdoruesit
+        </label>
+
+        <input
+            id="username"
+            autocomplete="username"
+            required
+        >
+
+        <label for="password">
+            Fjalëkalimi
+        </label>
+
+        <input
+            id="password"
+            type="password"
+            autocomplete="current-password"
+            required
+        >
+
+        <button class="gold">
+            KYÇU
+        </button>
+
+        <p id="loginError"
+           class="error"
+           role="alert"></p>
+
+    </form>
+
+</div>
+
+<!-- APLIKACIONI -->
+
+<div id="app" hidden>
+
+<header>
+
+    <div>
+
+        <h1 class="brand">OXYGEN VILLAS</h1>
+
+        <small>Menaxhimi i rezervimeve</small>
+
+    </div>
+
+    <div>
+
+        <button id="new" class="gold">
+            + Rezervim i ri
+        </button>
+
+        <button id="logout">
+            Dil
+        </button>
+
+    </div>
+
+</header>
+
+<main>
+
+    <aside id="months">
+
+        <select id="year"></select>
+
+    </aside>
+
+    <section>
+
+        <div class="toolbar">
+
+            <h2 id="title"></h2>
+
+            <div class="legend">
+
+                <span>
+                    <i class="dot free"></i>
+                    E lirë
+                </span>
+
+                <span>
+                    <i class="dot booked"></i>
+                    E rezervuar
+                </span>
+
+                <span>
+                    <i class="dot pending"></i>
+                    Në pritje
+                </span>
+
+            </div>
+
+        </div>
+
+        <p id="connection" role="status"></p>
+
+        <button id="refresh">
+            Rifresko
+        </button>
+
+        <button id="import" hidden>
+            Transfero rezervimet lokale
+        </button>
+
+        <div class="scroll">
+
+            <table id="calendar"></table>
+
+        </div>
+
+    </section>
+
+</main>
+
+</div>
+
+<!-- FORMULARI I REZERVIMIT -->
+
+<dialog id="modal">
+
+    <form id="form">
+
+        <h2 id="formTitle"></h2>
+
+        <label>Villa</label>
+
+        <select id="villa"></select>
+
+        <label>Emri i familjes</label>
+
+        <input id="name" required maxlength="100">
+
+        <label>Numri i telefonit</label>
+
+        <input id="phone" type="tel">
+
+        <label>Data e ardhjes</label>
+
+        <div class="dates" id="arrival"></div>
+
+        <label>Data e largimit</label>
+
+        <div class="dates" id="departure"></div>
+
+        <p id="nights"></p>
+
+        <label>Statusi</label>
+
+        <select id="status">
+
+            <option value="booked">
+                E rezervuar
+            </option>
+
+            <option value="pending">
+                Në pritje
+            </option>
+
+        </select>
+
+        <label>Shënime</label>
+
+        <textarea id="notes" rows="3"></textarea>
+
+        <p id="error" class="error" role="alert"></p>
+
+        <div class="actions">
+
+            <button class="gold" id="save">
+                Ruaj
+            </button>
+
+            <button type="button" id="cancel">
+                Anulo
+            </button>
+
+            <button
+                type="button"
+                id="remove"
+                class="danger">
+                Fshi
+            </button>
+
+        </div>
+
+    </form>
+
+</dialog>
+
+<script>
+
+/* LIDHJA ME SUPABASE */
+
+const $ = id => document.getElementById(id);
+
+const db = supabase.createClient(
+
+    "https://tjeggmejvmngcwvogsze.supabase.co",
+
+    "sb_publishable_MEyDxpARTqqCcc_8-UrKDw_gjnKwJl2"
+
+);
+
+const email = "e.demaj10@gmail.com";
+
+/* KONFIGURIMI */
+
+const names = [
+
+    "Janar",
+    "Shkurt",
+    "Mars",
+    "Prill",
+    "Maj",
+    "Qershor",
+    "Korrik",
+    "Gusht",
+    "Shtator",
+    "Tetor",
+    "Nëntor",
+    "Dhjetor"
+
+];
+
+const now = new Date();
+
+const pad = n => String(n).padStart(2, "0");
+
+const iso = (y, m, d) =>
+    `${y}-${pad(m + 1)}-${pad(d)}`;
+
+const next = s =>
+    new Date(Date.parse(s) + 86400000)
+        .toISOString().slice(0, 10);
+
+let year = now.getFullYear();
+let month = now.getMonth();
+
+let bookings = [];
+let editing = null;
+let channel = null;
+let ready = false;
+let version = 0;
+let busy = false;
+
+const last = Math.max(2040, year + 5);
+
+/* VITET */
+
+for (let y = 2026; y <= last; y++) {
+
+    $("year").add(new Option(y, y));
+
+}
+
+$("year").value = year;
+
+/* VILLAT */
+
+for (let v = 1; v <= 8; v++) {
+
+    $("villa").add(new Option("Villa " + v, v));
+
+}
+
+/* MUAJT */
+
+names.forEach((n, i) => {
+
+    let b = document.createElement("button");
+
+    b.textContent = n;
+
+    b.onclick = () => {
+
+        month = i;
+
+        render();
+
+    };
+
+    $("months").append(b);
+
+});
+
+$("year").onchange = () => {
+
+    year = +$("year").value;
+
+    render();
+
+};
+
+/* DATAT DITA / MUAJI / VITI */
+
+for (const p of ["arrival", "departure"]) {
+
+    for (const [k, label] of [
+
+        ["Day", "Dita"],
+        ["Month", "Muaji"],
+        ["Year", "Viti"]
+
+    ]) {
+
+        let div = document.createElement("div");
+
+        let s = document.createElement("select");
+
+        let l = document.createElement("small");
+
+        l.textContent = label;
+
+        s.id = p + k;
+
+        s.setAttribute("aria-label", p + " " + label);
+
+        div.append(l, s);
+
+        $(p).append(div);
+
+        if (k === "Month") {
+
+            for (let i = 1; i <= 12; i++) {
+
+                s.add(new Option(pad(i), i));
+
+            }
+
+        }
+
+        if (k === "Year") {
+
+            for (let i = 2026; i <= last + 1; i++) {
+
+                s.add(new Option(i, i));
+
+            }
+
+        }
+
+        s.onchange = () => {
+
+            if (k !== "Day") days(p);
+
+            count();
+
+        };
+
+    }
+
+}
+
+function days(p, d) {
+
+    let s = $(p + "Day");
+
+    let old = d || +s.value || 1;
+
+    let max = new Date(
+
+        +$(p + "Year").value,
+
+        +$(p + "Month").value,
+
+        0
+
+    ).getDate();
+
+    s.replaceChildren();
+
+    for (let i = 1; i <= max; i++) {
+
+        s.add(new Option(pad(i), i));
+
+    }
+
+    s.value = Math.min(old, max);
+
+}
+
+function setDate(p, s) {
+
+    let [y, m, d] = s.split("-").map(Number);
+
+    $(p + "Year").value = y;
+
+    $(p + "Month").value = m;
+
+    days(p, d);
+
+}
+
+function getDate(p) {
+
+    return iso(
+
+        +$(p + "Year").value,
+
+        +$(p + "Month").value - 1,
+
+        +$(p + "Day").value
+
+    );
+
+}
+
+/* NUMRI I NETËVE */
+
+function count() {
+
+    let n = (
+
+        Date.parse(getDate("departure")) -
+
+        Date.parse(getDate("arrival"))
+
+    ) / 86400000;
+
+    $("nights").textContent = n > 0
+
+        ? "Gjithsej: " + n +
+          (n === 1 ? " natë" : " net")
+
+        : "Kontrollo datat";
+
+}
+
+/* SHFAQJA E KALENDARIT */
+
+function render() {
+
+    $("title").textContent =
+        names[month] + " " + year;
+
+    document.querySelectorAll("aside button")
+
+        .forEach((b, i) =>
+
+            b.classList.toggle("active", i === month)
+
+        );
+
+    let t = $("calendar");
+
+    t.replaceChildren();
+
+    if (!ready) return;
+
+    let h = t.createTHead().insertRow();
+
+    [
+
+        "Data",
+
+        ...Array.from(
+            {length: 8},
+            (_, i) => "Villa " + (i + 1)
+        )
+
+    ].forEach(s => {
+
+        let th = document.createElement("th");
+
+        th.textContent = s;
+
+        h.append(th);
+
+    });
+
+    let body = t.createTBody();
+
+    let max = new Date(
+        year,
+        month + 1,
+        0
+    ).getDate();
+
+    for (let d = 1; d <= max; d++) {
+
+        let row = body.insertRow();
+
+        let date = iso(year, month, d);
+
+        let c = row.insertCell();
+
+        c.className = "date";
+
+        c.textContent =
+            pad(d) + "." + pad(month + 1);
+
+        for (let v = 1; v <= 8; v++) {
+
+            let b = bookings.find(x =>
+
+                x.villa === v &&
+
+                x.arrival <= date &&
+
+                date < x.departure
+
+            );
+
+            if (b && d > 1 && b.arrival < date) {
+
+                continue;
+
+            }
+
+            let cell = row.insertCell();
+
+            cell.className = b ? b.status : "free";
+
+            if (b) {
+
+                let span = 1;
+
+                while (
+
+                    d + span <= max &&
+
+                    iso(year, month, d + span)
+                        < b.departure
+
+                ) {
+
+                    span++;
+
+                }
+
+                cell.rowSpan = span;
+
+                cell.textContent = b.name;
+
+            }
+
+            cell.onclick = () =>
+                openForm(v, date, b);
+
+        }
+
+    }
+
+}
+
+/* LEXIMI NGA SUPABASE */
+
+async function load() {
+
+    let token = ++version;
+
+    try {
+
+        let all = [];
+
+        let offset = 0;
+
+        while (true) {
+
+            let {data, error} = await db
+
+                .from("bookings")
+
+                .select("*")
+
+                .order("id")
+
+                .range(offset, offset + 999);
+
+            if (error) throw error;
+
+            all.push(...data);
+
+            if (data.length < 1000) break;
+
+            offset += 1000;
+
+        }
+
+        if (
+
+            token !== version ||
+
+            $("app").hidden
+
+        ) return;
+
+        bookings = all;
+
+        ready = true;
+
+        $("connection").textContent =
+
+            "Online • " +
+
+            bookings.length +
+
+            " rezervime";
+
+        render();
+
+    } catch (e) {
+
+        if (token !== version) return;
+
+        ready = false;
+
+        render();
+
+        $("connection").textContent =
+
+            "Gabim në lidhje: " + e.message;
+
+    }
+
+}
+
+/* REZERVIMET E VJETRA LOKALE */
+
+function local() {
+
+    try {
+
+        let a = JSON.parse(
+
+            localStorage.getItem(
+                "villa-bookings-v1"
+            ) || "[]"
+
+        );
+
+        return Array.isArray(a) ? a : [];
+
+    } catch {
+
+        return [];
+
+    }
+
+}
+
+/* HAPJA E APLIKACIONIT */
+
+async function show() {
+
+    if (!$("app").hidden) return;
+
+    $("login").hidden = true;
+
+    $("app").hidden = false;
+
+    $("password").value = "";
+
+    $("import").hidden = !local().length;
+
+    await load();
+
+    if ($("app").hidden) return;
+
+    /* REALTIME */
+
+    channel = db
+
+        .channel("oxygen-bookings")
+
+        .on(
+
+            "postgres_changes",
+
+            {
+
+                event: "*",
+
+                schema: "public",
+
+                table: "bookings"
+
+            },
+
+            () => load()
+
+        )
+
+        .subscribe(s => {
+
+            if (s === "SUBSCRIBED") load();
+
+        });
+
+}
+
+/* MBYLLJA E APLIKACIONIT */
+
+function hide() {
+
+    version++;
+
+    ready = false;
+
+    bookings = [];
+
+    render();
+
+    $("app").hidden = true;
+
+    $("login").hidden = false;
+
+    if (channel) {
+
+        db.removeChannel(channel);
+
+        channel = null;
+
+    }
+
+    if ($("modal").open) {
+
+        $("modal").close();
+
+    }
+
+}
+
+/* LOGIN ME SUPABASE AUTH */
+
+$("loginForm").onsubmit = async e => {
+
+    e.preventDefault();
+
+    let btn = e.target.querySelector("button");
+
+    btn.disabled = true;
+
+    $("loginError").textContent = "";
+
+    try {
+
+        if (
+
+            $("username").value.trim()
+                .toLowerCase() !== "oxygen"
+
+        ) {
+
+            throw Error(
+                "Username ose fjalëkalimi i gabuar."
+            );
+
+        }
+
+        let {error} = await db.auth.signInWithPassword({
+
+            email: email,
+
+            password: $("password").value
+
+        });
+
+        if (error) throw error;
+
+        await show();
+
+    } catch (e) {
+
+        $("loginError").textContent = e.message;
+
+    } finally {
+
+        btn.disabled = false;
+
+    }
+
+};
+
+/* LOGOUT */
+
+$("logout").onclick = async () => {
+
+    let {error} = await db.auth.signOut();
+
+    if (error) {
+
+        alert(error.message);
+
+        return;
+
+    }
+
+    hide();
+
+};
+
+/* KONTROLLI I SESIONIT */
+
+db.auth.onAuthStateChange((event, session) => {
+
+    if (!session) {
+
+        hide();
+
+    } else {
+
+        setTimeout(show, 0);
+
+    }
+
+});
+
+/* RIFRESKIMI AUTOMATIK */
+
+$("refresh").onclick = load;
+
+window.addEventListener("focus", () => {
+
+    if (!$("app").hidden) load();
+
+});
+
+setInterval(() => {
+
+    if (!$("app").hidden && !document.hidden) {
+
+        load();
+
+    }
+
+}, 30000);
+
+/* HAPJA E FORMULARIT */
+
+function openForm(v, date, b) {
+
+    if (!ready) return;
+
+    editing = b?.id || null;
+
+    $("formTitle").textContent = b
+
+        ? "Ndrysho rezervimin"
+
+        : "Rezervim i ri";
+
+    $("villa").value = v;
+
+    for (let k of ["name", "phone", "notes"]) {
+
+        $(k).value = b?.[k] || "";
+
+    }
+
+    $("status").value = b?.status || "booked";
+
+    setDate(
+
+        "arrival",
+
+        b?.arrival || date
+
+    );
+
+    setDate(
+
+        "departure",
+
+        b?.departure || next(date)
+
+    );
+
+    $("remove").hidden = !b;
+
+    $("error").textContent = "";
+
+    count();
+
+    $("modal").showModal();
+
+}
+
+/* REZERVIM I RI */
+
+$("new").onclick = () => {
+
+    openForm(
+
+        1,
+
+        iso(
+
+            year,
+
+            month,
+
+            year === now.getFullYear() &&
+
+            month === now.getMonth()
+
+                ? now.getDate()
+
+                : 1
+
+        )
+
+    );
+
+};
+
+$("cancel").onclick = () => {
+
+    if (!busy) $("modal").close();
+
+};
+
+function lock(v) {
+
+    busy = v;
+
+    for (let k of ["save", "remove", "cancel"]) {
+
+        $(k).disabled = v;
+
+    }
+
+}
+
+function msg(e) {
+
+    return e.code === "23P01"
+
+        ? "Kjo villë është e zënë në këto data!"
+
+        : e.message;
+
+}
+
+/* RUAJTJA DIREKT NË SUPABASE */
+
+$("form").onsubmit = async e => {
+
+    e.preventDefault();
+
+    if (busy) return;
+
+    let b = {
+
+        villa: +$("villa").value,
+
+        name: $("name").value.trim(),
+
+        phone: $("phone").value.trim(),
+
+        arrival: getDate("arrival"),
+
+        departure: getDate("departure"),
+
+        status: $("status").value,
+
+        notes: $("notes").value.trim()
+
+    };
+
+    if (!b.name || b.departure <= b.arrival) {
+
+        $("error").textContent =
+
+            "Kontrollo emrin dhe datat.";
+
+        return;
+
+    }
+
+    lock(true);
+
+    try {
+
+        let q = editing
+
+            ? db.from("bookings")
+                .update(b)
+                .eq("id", editing)
+
+            : db.from("bookings")
+                .insert(b);
+
+        let {error} = await q
+
+            .select("id")
+
+            .single();
+
+        if (error) throw error;
+
+        $("modal").close();
+
+        await load();
+
+    } catch (e) {
+
+        $("error").textContent = msg(e);
+
+    } finally {
+
+        lock(false);
+
+    }
+
+};
+
+/* FSHIRJA NGA SUPABASE */
+
+$("remove").onclick = async () => {
+
+    if (
+
+        busy ||
+
+        !confirm("A dëshiron ta fshish rezervimin?")
+
+    ) return;
+
+    lock(true);
+
+    try {
+
+        let {error} = await db
+
+            .from("bookings")
+
+            .delete()
+
+            .eq("id", editing)
+
+            .select("id")
+
+            .single();
+
+        if (error) throw error;
+
+        $("modal").close();
+
+        await load();
+
+    } catch (e) {
+
+        $("error").textContent = msg(e);
+
+    } finally {
+
+        lock(false);
+
+    }
+
+};
+
+/* TRANSFERIMI I REZERVIMEVE LOKALE */
+
+$("import").onclick = async () => {
+
+    if (
+
+        !ready ||
+
+        !confirm(
+
+            "Transfero rezervimet nga ky shfletues? " +
+
+            "Rezervimet lokale nuk do të fshihen."
+
+        )
+
+    ) return;
+
+    $("import").disabled = true;
+
+    let added = 0;
+
+    let skipped = 0;
+
+    let errors = [];
+
+    try {
+
+        await load();
+
+        if (!ready) {
+
+            throw Error(
+                "Nuk ka lidhje me databazën"
+            );
+
+        }
+
+        for (let x of local()) {
+
+            let b = {
+
+                villa: Number(x.villa),
+
+                name: x.name,
+
+                phone: x.phone || "",
+
+                arrival: x.arrival,
+
+                departure: x.departure,
+
+                status: x.status,
+
+                notes: x.notes || ""
+
+            };
+
+            if (
+
+                bookings.some(y =>
+
+                    Object.keys(b).every(k =>
+
+                        (y[k] ?? "") === b[k]
+
+                    )
+
+                )
+
+            ) {
+
+                skipped++;
+
+                continue;
+
+            }
+
+            let {data, error} = await db
+
+                .from("bookings")
+
+                .insert(b)
+
+                .select()
+
+                .single();
+
+            if (error) {
+
+                errors.push(
+
+                    (b.name || "?") +
+
+                    ": " +
+
+                    msg(error)
+
+                );
+
+            } else {
+
+                added++;
+
+                bookings.push(data);
+
+            }
+
+        }
+
+        await load();
+
+        alert(
+
+            "Transferuar: " + added +
+
+            "\nEkzistuese: " + skipped +
+
+            "\nGabime: " + errors.length +
+
+            "\n" + errors.join("\n")
+
+        );
+
+    } catch (e) {
+
+        alert(e.message);
+
+    } finally {
+
+        $("import").disabled = false;
+
+    }
+
+};
+
+</script>
+
+</body>
+</html>
