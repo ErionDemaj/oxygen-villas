@@ -3,7 +3,7 @@
 <html lang="sq">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Oxygen Villas</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -111,13 +111,13 @@ header small {
     color: #b9c7d8;
 }
 
-/* KALENDARI */
-
 main {
     display: flex;
     gap: 14px;
     padding: 0 14px 14px;
 }
+
+/* MUAJT */
 
 aside {
     width: 170px;
@@ -137,6 +137,8 @@ aside select {
     background: #20334b;
     color: #dfbb78;
 }
+
+/* KALENDARI */
 
 section {
     flex: 1;
@@ -177,6 +179,10 @@ h2 {
     overflow: auto;
     max-height: 75vh;
     margin-top: 16px;
+    overscroll-behavior: contain;
+    overflow-anchor: none;
+    scroll-behavior: auto;
+    touch-action: pan-x pan-y;
 }
 
 table {
@@ -241,6 +247,15 @@ td:not(.date) {
     font-weight: bold;
 }
 
+#calendar th:not(:first-child) {
+    cursor: pointer;
+}
+
+#calendar th:not(:first-child):hover {
+    background: #dfbb78;
+    color: #101e30;
+}
+
 /* FORMULARI */
 
 dialog {
@@ -300,25 +315,131 @@ dialog::backdrop {
     color: #52647a;
 }
 
-/* TELEFONI */
+/* TABELA E REZERVIMEVE TE VILLAVE */
+
+#villaOverview {
+    width: min(650px, 94vw);
+    background: #17283d;
+    color: white;
+    border: 1px solid #dfbb78;
+    max-height: 85dvh;
+    overscroll-behavior: contain;
+}
+
+.overview-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: #dfbb78;
+}
+
+.overview-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 16px 0;
+}
+
+.overview-stats div {
+    background: #20334b;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.overview-stats strong {
+    display: block;
+    font-size: 25px;
+    color: #dfbb78;
+}
+
+.overview-scroll {
+    overflow: auto;
+    overscroll-behavior: contain;
+}
+
+#overviewTable {
+    min-width: 480px;
+    table-layout: auto;
+}
+
+#overviewTable th {
+    position: static;
+    width: auto;
+    background: #293c54;
+    color: #dfbb78;
+}
+
+#overviewTable td {
+    background: #20334b;
+    color: white;
+    cursor: default;
+}
+
+#overviewTable td.booked {
+    background: #a92935;
+}
+
+#overviewTable td.pending {
+    background: #f9d66d;
+    color: #614500;
+}
+
+#overviewFree {
+    background: #203c35;
+    color: #a6edb5;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+/* OPTIMIZIMI PER TELEFON */
 
 @media(max-width: 700px) {
 
-    header {
-        padding: 15px;
+    html, body {
+        overscroll-behavior: none;
     }
 
-    main {
-        display: block;
+    body:has(#app:not([hidden])) {
+        overflow: hidden;
+    }
+
+    #app:not([hidden]) {
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    #app header {
+        flex-shrink: 0;
+        padding: 10px;
+    }
+
+    #app header h1 {
+        font-size: 20px;
+    }
+
+    #app main {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        gap: 6px;
         padding: 0 8px 8px;
     }
 
-    aside {
+    #months {
         width: 100%;
         display: flex;
-        overflow: auto;
+        flex-shrink: 0;
         gap: 5px;
         padding-bottom: 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
+        touch-action: pan-x;
     }
 
     aside select {
@@ -332,21 +453,43 @@ dialog::backdrop {
         margin: 0;
     }
 
-    section {
+    #app section {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
         padding: 10px;
     }
 
-    table {
+    #app section > :not(.scroll) {
+        flex-shrink: 0;
+    }
+
+    .scroll {
+        flex: 1;
+        min-height: 0;
+        max-height: none;
+        overflow: auto;
+        margin-top: 8px;
+    }
+
+    #calendar {
         min-width: 800px;
+    }
+
+    #calendar td {
+        height: 45px;
     }
 
     input, select, textarea {
         font-size: 16px;
     }
 
-    .scroll {
-        max-height: 70vh;
+    #villaOverview {
+        padding: 15px;
     }
+
 }
 
 </style>
@@ -362,7 +505,9 @@ dialog::backdrop {
 
         <h1 class="brand">OXYGEN</h1>
 
-        <p style="letter-spacing:7px">VILLAS</p>
+        <p style="letter-spacing:7px">
+            VILLAS
+        </p>
 
         <p>Reservation Management</p>
 
@@ -407,9 +552,13 @@ dialog::backdrop {
 
     <div>
 
-        <h1 class="brand">OXYGEN VILLAS</h1>
+        <h1 class="brand">
+            OXYGEN VILLAS
+        </h1>
 
-        <small>Menaxhimi i rezervimeve</small>
+        <small>
+            Menaxhimi i rezervimeve
+        </small>
 
     </div>
 
@@ -498,7 +647,11 @@ dialog::backdrop {
 
         <label>Emri i familjes</label>
 
-        <input id="name" required maxlength="100">
+        <input
+            id="name"
+            required
+            maxlength="100"
+        >
 
         <label>Numri i telefonit</label>
 
@@ -532,7 +685,9 @@ dialog::backdrop {
 
         <textarea id="notes" rows="3"></textarea>
 
-        <p id="error" class="error" role="alert"></p>
+        <p id="error"
+           class="error"
+           role="alert"></p>
 
         <div class="actions">
 
@@ -554,6 +709,79 @@ dialog::backdrop {
         </div>
 
     </form>
+
+</dialog>
+
+<!-- TABELA E REZERVIMEVE SIPAS VILLES -->
+
+<dialog id="villaOverview">
+
+    <div class="overview-head">
+
+        <h2 id="overviewTitle"></h2>
+
+        <button
+            id="overviewClose"
+            type="button"
+            aria-label="Mbyll">
+            ✕
+        </button>
+
+    </div>
+
+    <div class="overview-stats">
+
+        <div>
+
+            Rezervime
+
+            <strong id="overviewCount">
+                0
+            </strong>
+
+        </div>
+
+        <div>
+
+            Net të zëna
+
+            <strong id="overviewNights">
+                0
+            </strong>
+
+        </div>
+
+    </div>
+
+    <p id="overviewEmpty" hidden>
+        Nuk ka rezervime për këtë muaj.
+    </p>
+
+    <div class="overview-scroll">
+
+        <table id="overviewTable">
+
+            <thead>
+
+                <tr>
+
+                    <th>Familja</th>
+                    <th>Ardhja</th>
+                    <th>Largimi</th>
+                    <th>Net</th>
+                    <th>Statusi</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="overviewBody"></tbody>
+
+        </table>
+
+    </div>
+
+    <p id="overviewFree"></p>
 
 </dialog>
 
@@ -612,6 +840,7 @@ let channel = null;
 let ready = false;
 let version = 0;
 let busy = false;
+let overviewVilla = 1;
 
 const last = Math.max(2040, year + 5);
 
@@ -625,11 +854,13 @@ for (let y = 2026; y <= last; y++) {
 
 $("year").value = year;
 
-/* VILLAT */
+/* 8 VILLAT */
 
 for (let v = 1; v <= 8; v++) {
 
-    $("villa").add(new Option("Villa " + v, v));
+    $("villa").add(
+        new Option("Villa " + v, v)
+    );
 
 }
 
@@ -661,7 +892,7 @@ $("year").onchange = () => {
 
 };
 
-/* DATAT DITA / MUAJI / VITI */
+/* DATAT */
 
 for (const p of ["arrival", "departure"]) {
 
@@ -775,8 +1006,6 @@ function getDate(p) {
 
 }
 
-/* NUMRI I NETËVE */
-
 function count() {
 
     let n = (
@@ -824,8 +1053,11 @@ function render() {
         "Data",
 
         ...Array.from(
+
             {length: 8},
+
             (_, i) => "Villa " + (i + 1)
+
         )
 
     ].forEach(s => {
@@ -834,6 +1066,37 @@ function render() {
 
         th.textContent = s;
 
+        if (s.startsWith("Villa ")) {
+
+            th.tabIndex = 0;
+
+            th.setAttribute("role", "button");
+
+            th.setAttribute(
+                "aria-label",
+                s + " – rezervimet"
+            );
+
+            th.onkeydown = e => {
+
+                if (
+
+                    e.key === "Enter" ||
+
+                    e.key === " "
+
+                ) {
+
+                    e.preventDefault();
+
+                    th.click();
+
+                }
+
+            };
+
+        }
+
         h.append(th);
 
     });
@@ -841,9 +1104,13 @@ function render() {
     let body = t.createTBody();
 
     let max = new Date(
+
         year,
+
         month + 1,
+
         0
+
     ).getDate();
 
     for (let d = 1; d <= max; d++) {
@@ -871,7 +1138,15 @@ function render() {
 
             );
 
-            if (b && d > 1 && b.arrival < date) {
+            if (
+
+                b &&
+
+                d > 1 &&
+
+                b.arrival < date
+
+            ) {
 
                 continue;
 
@@ -879,7 +1154,11 @@ function render() {
 
             let cell = row.insertCell();
 
-            cell.className = b ? b.status : "free";
+            cell.className = b
+
+                ? b.status
+
+                : "free";
 
             if (b) {
 
@@ -905,6 +1184,7 @@ function render() {
             }
 
             cell.onclick = () =>
+
                 openForm(v, date, b);
 
         }
@@ -955,6 +1235,13 @@ async function load() {
 
         ) return;
 
+        const changed =
+
+            !ready ||
+
+            JSON.stringify(bookings) !==
+            JSON.stringify(all);
+
         bookings = all;
 
         ready = true;
@@ -967,7 +1254,13 @@ async function load() {
 
             " rezervime";
 
-        render();
+        if (changed) render();
+
+        if ($("villaOverview").open) {
+
+            updateOverview();
+
+        }
 
     } catch (e) {
 
@@ -985,7 +1278,7 @@ async function load() {
 
 }
 
-/* REZERVIMET E VJETRA LOKALE */
+/* REZERVIMET LOKALE */
 
 function local() {
 
@@ -994,7 +1287,9 @@ function local() {
         let a = JSON.parse(
 
             localStorage.getItem(
+
                 "villa-bookings-v1"
+
             ) || "[]"
 
         );
@@ -1026,8 +1321,6 @@ async function show() {
     await load();
 
     if ($("app").hidden) return;
-
-    /* REALTIME */
 
     channel = db
 
@@ -1089,9 +1382,15 @@ function hide() {
 
     }
 
+    if ($("villaOverview").open) {
+
+        $("villaOverview").close();
+
+    }
+
 }
 
-/* LOGIN ME SUPABASE AUTH */
+/* LOGIN */
 
 $("loginForm").onsubmit = async e => {
 
@@ -1113,7 +1412,9 @@ $("loginForm").onsubmit = async e => {
         ) {
 
             throw Error(
+
                 "Username ose fjalëkalimi i gabuar."
+
             );
 
         }
@@ -1160,7 +1461,7 @@ $("logout").onclick = async () => {
 
 };
 
-/* KONTROLLI I SESIONIT */
+/* SESIONI */
 
 db.auth.onAuthStateChange((event, session) => {
 
@@ -1176,7 +1477,7 @@ db.auth.onAuthStateChange((event, session) => {
 
 });
 
-/* RIFRESKIMI AUTOMATIK */
+/* SINKRONIZIMI AUTOMATIK */
 
 $("refresh").onclick = load;
 
@@ -1188,7 +1489,13 @@ window.addEventListener("focus", () => {
 
 setInterval(() => {
 
-    if (!$("app").hidden && !document.hidden) {
+    if (
+
+        !$("app").hidden &&
+
+        !document.hidden
+
+    ) {
 
         load();
 
@@ -1196,7 +1503,7 @@ setInterval(() => {
 
 }, 30000);
 
-/* HAPJA E FORMULARIT */
+/* FORMULARI I REZERVIMIT */
 
 function openForm(v, date, b) {
 
@@ -1302,7 +1609,7 @@ function msg(e) {
 
 }
 
-/* RUAJTJA DIREKT NË SUPABASE */
+/* RUAJTJA E REZERVIMIT */
 
 $("form").onsubmit = async e => {
 
@@ -1345,10 +1652,13 @@ $("form").onsubmit = async e => {
         let q = editing
 
             ? db.from("bookings")
+
                 .update(b)
+
                 .eq("id", editing)
 
             : db.from("bookings")
+
                 .insert(b);
 
         let {error} = await q
@@ -1375,7 +1685,7 @@ $("form").onsubmit = async e => {
 
 };
 
-/* FSHIRJA NGA SUPABASE */
+/* FSHIRJA E REZERVIMIT */
 
 $("remove").onclick = async () => {
 
@@ -1454,7 +1764,9 @@ $("import").onclick = async () => {
         if (!ready) {
 
             throw Error(
+
                 "Nuk ka lidhje me databazën"
+
             );
 
         }
@@ -1556,6 +1868,184 @@ $("import").onclick = async () => {
     }
 
 };
+
+/* FORMATIMI I DATAVE */
+
+const formatDate = s =>
+
+    s.split("-").reverse().join(".");
+
+const nightsBetween = (a, b) =>
+
+    (Date.parse(b) - Date.parse(a)) / 86400000;
+
+/* TABELA E REZERVIMEVE SIPAS VILLES */
+
+function updateOverview() {
+
+    const start = iso(
+
+        year,
+
+        month,
+
+        1
+
+    );
+
+    const total = new Date(
+
+        year,
+
+        month + 1,
+
+        0
+
+    ).getDate();
+
+    const end = next(
+
+        iso(year, month, total)
+
+    );
+
+    const list = bookings
+
+        .filter(b =>
+
+            Number(b.villa) === overviewVilla &&
+
+            b.arrival < end &&
+
+            b.departure > start
+
+        )
+
+        .sort((a, b) =>
+
+            a.arrival.localeCompare(b.arrival)
+
+        );
+
+    $("overviewTitle").textContent =
+
+        "Villa " + overviewVilla +
+
+        " – " + names[month] +
+
+        " " + year;
+
+    $("overviewCount").textContent =
+
+        list.length;
+
+    $("overviewBody").replaceChildren();
+
+    let occupied = 0;
+
+    for (const b of list) {
+
+        occupied += nightsBetween(
+
+            b.arrival > start
+
+                ? b.arrival
+
+                : start,
+
+            b.departure < end
+
+                ? b.departure
+
+                : end
+
+        );
+
+        const row = $("overviewBody").insertRow();
+
+        [
+
+            b.name,
+
+            formatDate(b.arrival),
+
+            formatDate(b.departure),
+
+            nightsBetween(
+
+                b.arrival,
+
+                b.departure
+
+            ),
+
+            b.status === "pending"
+
+                ? "Në pritje"
+
+                : "Rezervuar"
+
+        ].forEach((v, i) => {
+
+            const c = row.insertCell();
+
+            c.textContent = v;
+
+            if (i === 4) {
+
+                c.className = b.status;
+
+            }
+
+        });
+
+    }
+
+    $("overviewNights").textContent = occupied;
+
+    $("overviewFree").textContent =
+
+        (total - occupied) +
+
+        " net të lira këtë muaj";
+
+    $("overviewEmpty").hidden =
+
+        !!list.length;
+
+    $("overviewTable").hidden =
+
+        !list.length;
+
+}
+
+/* KLIKIMI MBI VILLA 1 - VILLA 8 */
+
+$("calendar").addEventListener("click", e => {
+
+    const h = e.target.closest("th");
+
+    const match = h?.textContent
+
+        .trim()
+
+        .match(/^Villa\s+([1-8])$/);
+
+    if (!match || !ready) return;
+
+    overviewVilla = Number(match[1]);
+
+    updateOverview();
+
+    $("villaOverview").showModal();
+
+});
+
+/* MBYLLJA E TABELES */
+
+$("overviewClose").onclick = () =>
+
+    $("villaOverview").close();
 
 </script>
 
