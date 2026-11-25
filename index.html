@@ -2,8 +2,10 @@
 <!DOCTYPE html>
 <html lang="sq">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Oxygen Villas</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -14,9 +16,18 @@
     box-sizing: border-box;
 }
 
+:root {
+    --navy: #101e30;
+    --panel: #17283d;
+    --gold: #dfbb78;
+    --green: #c9edcc;
+    --red: #f39a9a;
+    --yellow: #f9d66d;
+}
+
 body {
     margin: 0;
-    background: #101e30;
+    background: var(--navy);
     color: white;
     font: 15px system-ui, sans-serif;
 }
@@ -37,9 +48,14 @@ button {
     border: 0;
 }
 
+button:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
+
 button.gold, .active {
-    background: #dfbb78 !important;
-    color: #101e30 !important;
+    background: var(--gold) !important;
+    color: var(--navy) !important;
     font-weight: bold;
 }
 
@@ -70,13 +86,13 @@ label {
 .login-card {
     width: min(380px, 100%);
     padding: 30px;
-    background: #17283d;
-    border: 1px solid #dfbb78;
+    background: var(--panel);
+    border: 1px solid var(--gold);
     border-radius: 24px;
 }
 
 .brand {
-    color: #dfbb78;
+    color: var(--gold);
     letter-spacing: 4px;
     margin: 0;
 }
@@ -111,6 +127,11 @@ header small {
     color: #b9c7d8;
 }
 
+.header-actions {
+    display: flex;
+    gap: 7px;
+}
+
 main {
     display: flex;
     gap: 14px;
@@ -135,7 +156,7 @@ aside button {
 
 aside select {
     background: #20334b;
-    color: #dfbb78;
+    color: var(--gold);
 }
 
 /* KALENDARI */
@@ -178,71 +199,72 @@ h2 {
 .scroll {
     overflow: auto;
     max-height: 75vh;
-    margin-top: 16px;
+    margin-top: 12px;
     overscroll-behavior: contain;
     overflow-anchor: none;
     scroll-behavior: auto;
-    touch-action: pan-x pan-y;
 }
 
-table {
+#calendar {
     border-spacing: 3px;
     width: 100%;
     min-width: 920px;
     table-layout: fixed;
 }
 
-th {
+#calendar th {
     background: #172b43;
     color: white;
     position: sticky;
     top: 0;
-    z-index: 2;
+    z-index: 5;
     height: 42px;
     border-radius: 6px;
+    font-size: 13px;
 }
 
-th:first-child,
-td.date {
+#calendar th:first-child,
+#calendar td.date {
     width: 72px;
     position: sticky;
     left: 0;
-    z-index: 1;
 }
 
-th:first-child {
-    z-index: 3;
+#calendar th:first-child {
+    z-index: 7;
 }
 
-td {
+#calendar td {
     height: 43px;
     border-radius: 6px;
     text-align: center;
     font-size: 12px;
     overflow-wrap: anywhere;
+    word-break: normal;
     padding: 4px;
 }
 
-td.date {
+#calendar td.date {
     background: #dce3ed;
     font-weight: bold;
+    z-index: 4;
 }
 
 .free {
-    background: #c9edcc;
+    background: var(--green);
 }
 
 .booked {
-    background: #f39a9a;
+    background: var(--red);
     color: #631b24;
 }
 
 .pending {
-    background: #f9d66d;
+    background: var(--yellow);
     color: #614500;
 }
 
-td:not(.date) {
+#calendar td:not(.date) {
     cursor: pointer;
     font-weight: bold;
 }
@@ -252,8 +274,20 @@ td:not(.date) {
 }
 
 #calendar th:not(:first-child):hover {
-    background: #dfbb78;
-    color: #101e30;
+    background: var(--gold);
+    color: var(--navy);
+}
+
+.villa-short {
+    display: none;
+}
+
+.booking-name {
+    display: block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    line-height: 1.15;
 }
 
 /* FORMULARI */
@@ -266,6 +300,7 @@ dialog {
     max-height: 90dvh;
     overflow: auto;
     color: #172234;
+    overscroll-behavior: contain;
 }
 
 dialog::backdrop {
@@ -313,17 +348,17 @@ dialog::backdrop {
 #connection {
     font-size: 12px;
     color: #52647a;
+    margin: 8px 0;
 }
 
-/* TABELA E REZERVIMEVE TE VILLAVE */
+/* TABELA E REZERVIMEVE */
 
 #villaOverview {
     width: min(650px, 94vw);
-    background: #17283d;
+    background: var(--panel);
     color: white;
-    border: 1px solid #dfbb78;
+    border: 1px solid var(--gold);
     max-height: 85dvh;
-    overscroll-behavior: contain;
 }
 
 .overview-head {
@@ -331,7 +366,11 @@ dialog::backdrop {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    color: #dfbb78;
+    color: var(--gold);
+}
+
+.overview-head h2 {
+    font-size: 20px;
 }
 
 .overview-stats {
@@ -350,7 +389,7 @@ dialog::backdrop {
 .overview-stats strong {
     display: block;
     font-size: 25px;
-    color: #dfbb78;
+    color: var(--gold);
 }
 
 .overview-scroll {
@@ -359,21 +398,27 @@ dialog::backdrop {
 }
 
 #overviewTable {
-    min-width: 480px;
-    table-layout: auto;
+    width: 100%;
+    border-spacing: 3px;
+    table-layout: fixed;
 }
 
 #overviewTable th {
-    position: static;
-    width: auto;
     background: #293c54;
-    color: #dfbb78;
+    color: var(--gold);
+    padding: 8px 3px;
+    border-radius: 5px;
+    font-size: 12px;
 }
 
 #overviewTable td {
     background: #20334b;
     color: white;
-    cursor: default;
+    padding: 10px 3px;
+    text-align: center;
+    overflow-wrap: anywhere;
+    border-radius: 5px;
+    font-size: 12px;
 }
 
 #overviewTable td.booked {
@@ -381,7 +426,7 @@ dialog::backdrop {
 }
 
 #overviewTable td.pending {
-    background: #f9d66d;
+    background: var(--yellow);
     color: #614500;
 }
 
@@ -392,11 +437,13 @@ dialog::backdrop {
     border-radius: 10px;
 }
 
-/* OPTIMIZIMI PER TELEFON */
+/* TELEFONI - PA SCROLL HORIZONTAL */
 
 @media(max-width: 700px) {
 
     html, body {
+        width: 100%;
+        max-width: 100%;
         overscroll-behavior: none;
     }
 
@@ -413,73 +460,171 @@ dialog::backdrop {
 
     #app header {
         flex-shrink: 0;
-        padding: 10px;
+        padding: 12px 8px;
+        gap: 8px;
     }
 
     #app header h1 {
-        font-size: 20px;
+        font-size: 19px;
+        letter-spacing: 2px;
+    }
+
+    #app header small {
+        font-size: 10px;
+    }
+
+    .header-actions button {
+        font-size: 11px;
+        padding: 9px;
     }
 
     #app main {
         flex: 1;
         min-height: 0;
+        min-width: 0;
         display: flex;
         flex-direction: column;
         overflow: hidden;
         gap: 6px;
-        padding: 0 8px 8px;
+        padding: 0 4px 4px;
     }
+
+    /* MUAJT NE TELEFON */
 
     #months {
         width: 100%;
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         flex-shrink: 0;
-        gap: 5px;
-        padding-bottom: 10px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        overscroll-behavior-x: contain;
-        touch-action: pan-x;
+        gap: 3px;
+        padding-bottom: 4px;
     }
 
-    aside select {
-        width: 90px;
-        flex-shrink: 0;
+    #months select {
+        grid-column: 1 / -1;
+        width: 100%;
+        padding: 5px;
+        text-align: center;
     }
 
-    aside button {
-        width: auto;
-        white-space: nowrap;
+    #months button {
+        width: 100%;
+        text-align: center;
+        font-size: 11px;
+        padding: 7px 2px;
         margin: 0;
     }
 
     #app section {
         flex: 1;
         min-height: 0;
+        min-width: 0;
+        width: 100%;
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        padding: 10px;
+        padding: 6px 3px;
+        border-radius: 12px;
     }
 
     #app section > :not(.scroll) {
         flex-shrink: 0;
     }
 
+    .toolbar {
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .toolbar h2 {
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .legend {
+        justify-content: center;
+        font-size: 10px;
+        gap: 8px;
+    }
+
+    .dot {
+        width: 9px;
+        height: 9px;
+    }
+
+    #connection {
+        text-align: center;
+        font-size: 10px;
+        margin: 5px 0;
+    }
+
+    #refresh,
+    #import {
+        padding: 5px;
+        font-size: 11px;
+        margin-bottom: 3px;
+    }
+
     .scroll {
         flex: 1;
         min-height: 0;
+        min-width: 0;
         max-height: none;
-        overflow: auto;
-        margin-top: 8px;
+        width: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        touch-action: pan-y;
+        overscroll-behavior: contain;
+        margin-top: 4px;
     }
 
+    /* TE 8 VILLAT NE NJE EKRAN */
+
     #calendar {
-        min-width: 800px;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        table-layout: fixed;
+        border-spacing: 1px 2px;
+    }
+
+    #calendar th:first-child,
+    #calendar td.date {
+        width: 36px;
+        font-size: 10px;
+    }
+
+    #calendar th {
+        font-size: 11px;
+        height: 33px;
+        padding: 1px;
+        border-radius: 4px;
     }
 
     #calendar td {
-        height: 45px;
+        height: 40px;
+        font-size: 9px;
+        padding: 2px 1px;
+        border-radius: 4px;
+        overflow-wrap: anywhere;
+        word-break: normal;
+    }
+
+    .villa-full {
+        display: none;
+    }
+
+    .villa-short {
+        display: inline;
+    }
+
+    .booking-name {
+        font-size: 9px;
+        font-weight: 700;
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+        white-space: normal;
     }
 
     input, select, textarea {
@@ -487,7 +632,17 @@ dialog::backdrop {
     }
 
     #villaOverview {
-        padding: 15px;
+        padding: 12px;
+    }
+
+    .overview-head h2 {
+        font-size: 17px;
+    }
+
+    #overviewTable th,
+    #overviewTable td {
+        font-size: 10px;
+        padding: 8px 2px;
     }
 
 }
@@ -562,7 +717,7 @@ dialog::backdrop {
 
     </div>
 
-    <div>
+    <div class="header-actions">
 
         <button id="new" class="gold">
             + Rezervim i ri
@@ -633,7 +788,7 @@ dialog::backdrop {
 
 </div>
 
-<!-- FORMULARI I REZERVIMIT -->
+<!-- FORMULARI -->
 
 <dialog id="modal">
 
@@ -878,6 +1033,9 @@ names.forEach((n, i) => {
 
         render();
 
+        document.querySelector(".scroll")
+            .scrollTop = 0;
+
     };
 
     $("months").append(b);
@@ -890,9 +1048,12 @@ $("year").onchange = () => {
 
     render();
 
+    document.querySelector(".scroll")
+        .scrollTop = 0;
+
 };
 
-/* DATAT */
+/* DATAT DITA MUAJI VITI */
 
 for (const p of ["arrival", "departure"]) {
 
@@ -914,7 +1075,10 @@ for (const p of ["arrival", "departure"]) {
 
         s.id = p + k;
 
-        s.setAttribute("aria-label", p + " " + label);
+        s.setAttribute(
+            "aria-label",
+            p + " " + label
+        );
 
         div.append(l, s);
 
@@ -1025,7 +1189,7 @@ function count() {
 
 }
 
-/* SHFAQJA E KALENDARIT */
+/* KALENDARI */
 
 function render() {
 
@@ -1040,6 +1204,12 @@ function render() {
 
         );
 
+    const scroll = document.querySelector(".scroll");
+
+    const oldTop = scroll.scrollTop;
+
+    const oldLeft = scroll.scrollLeft;
+
     let t = $("calendar");
 
     t.replaceChildren();
@@ -1048,58 +1218,70 @@ function render() {
 
     let h = t.createTHead().insertRow();
 
-    [
+    let dateHeader = document.createElement("th");
 
-        "Data",
+    dateHeader.textContent = "Data";
 
-        ...Array.from(
+    h.append(dateHeader);
 
-            {length: 8},
+    /* TITULLI I VILLAVE */
 
-            (_, i) => "Villa " + (i + 1)
-
-        )
-
-    ].forEach(s => {
+    for (let v = 1; v <= 8; v++) {
 
         let th = document.createElement("th");
 
-        th.textContent = s;
+        let full = document.createElement("span");
 
-        if (s.startsWith("Villa ")) {
+        full.className = "villa-full";
 
-            th.tabIndex = 0;
+        full.textContent = "Villa " + v;
 
-            th.setAttribute("role", "button");
+        let short = document.createElement("span");
 
-            th.setAttribute(
-                "aria-label",
-                s + " – rezervimet"
-            );
+        short.className = "villa-short";
 
-            th.onkeydown = e => {
+        short.textContent = "V" + v;
 
-                if (
+        th.append(full, short);
 
-                    e.key === "Enter" ||
+        th.dataset.villa = v;
 
-                    e.key === " "
+        th.tabIndex = 0;
 
-                ) {
+        th.setAttribute("role", "button");
 
-                    e.preventDefault();
+        th.setAttribute(
+            "aria-label",
+            "Villa " + v + " - Rezervimet"
+        );
 
-                    th.click();
+        th.onclick = () => {
 
-                }
+            openVillaOverview(v);
 
-            };
+        };
 
-        }
+        th.onkeydown = e => {
+
+            if (
+
+                e.key === "Enter" ||
+
+                e.key === " "
+
+            ) {
+
+                e.preventDefault();
+
+                openVillaOverview(v);
+
+            }
+
+        };
 
         h.append(th);
 
-    });
+    }
 
     let body = t.createTBody();
 
@@ -1130,7 +1312,7 @@ function render() {
 
             let b = bookings.find(x =>
 
-                x.villa === v &&
+                Number(x.villa) === v &&
 
                 x.arrival <= date &&
 
@@ -1179,7 +1361,15 @@ function render() {
 
                 cell.rowSpan = span;
 
-                cell.textContent = b.name;
+                let family = document.createElement("span");
+
+                family.className = "booking-name";
+
+                family.textContent = b.name;
+
+                cell.append(family);
+
+                cell.title = b.name;
 
             }
 
@@ -1190,6 +1380,10 @@ function render() {
         }
 
     }
+
+    scroll.scrollTop = oldTop;
+
+    scroll.scrollLeft = oldLeft;
 
 }
 
@@ -1254,11 +1448,15 @@ async function load() {
 
             " rezervime";
 
-        if (changed) render();
+        if (changed) {
 
-        if ($("villaOverview").open) {
+            render();
 
-            updateOverview();
+            if ($("villaOverview").open) {
+
+                updateOverview();
+
+            }
 
         }
 
@@ -1269,6 +1467,12 @@ async function load() {
         ready = false;
 
         render();
+
+        if ($("villaOverview").open) {
+
+            $("villaOverview").close();
+
+        }
 
         $("connection").textContent =
 
@@ -1317,6 +1521,10 @@ async function show() {
     $("password").value = "";
 
     $("import").hidden = !local().length;
+
+    $("connection").textContent =
+
+        "Duke u lidhur...";
 
     await load();
 
@@ -1477,7 +1685,7 @@ db.auth.onAuthStateChange((event, session) => {
 
 });
 
-/* SINKRONIZIMI AUTOMATIK */
+/* SINKRONIZIMI */
 
 $("refresh").onclick = load;
 
@@ -1503,7 +1711,7 @@ setInterval(() => {
 
 }, 30000);
 
-/* FORMULARI I REZERVIMIT */
+/* FORMULARI */
 
 function openForm(v, date, b) {
 
@@ -1587,6 +1795,12 @@ $("cancel").onclick = () => {
 
 };
 
+$("modal").addEventListener("cancel", e => {
+
+    if (busy) e.preventDefault();
+
+});
+
 function lock(v) {
 
     busy = v;
@@ -1617,6 +1831,16 @@ $("form").onsubmit = async e => {
 
     if (busy) return;
 
+    if (!ready) {
+
+        $("error").textContent =
+
+            "Nuk ka lidhje me databazën.";
+
+        return;
+
+    }
+
     let b = {
 
         villa: +$("villa").value,
@@ -1640,6 +1864,30 @@ $("form").onsubmit = async e => {
         $("error").textContent =
 
             "Kontrollo emrin dhe datat.";
+
+        return;
+
+    }
+
+    /* KONTROLLI I REZERVIMEVE TE DYFISHTA */
+
+    const conflict = bookings.some(x =>
+
+        x.id !== editing &&
+
+        Number(x.villa) === b.villa &&
+
+        x.arrival < b.departure &&
+
+        x.departure > b.arrival
+
+    );
+
+    if (conflict) {
+
+        $("error").textContent =
+
+            "Kjo villë është e zënë në këto data!";
 
         return;
 
@@ -1692,6 +1940,8 @@ $("remove").onclick = async () => {
     if (
 
         busy ||
+
+        !editing ||
 
         !confirm("A dëshiron ta fshish rezervimin?")
 
@@ -1845,6 +2095,8 @@ $("import").onclick = async () => {
 
         await load();
 
+        if (ready) render();
+
         alert(
 
             "Transferuar: " + added +
@@ -1879,7 +2131,7 @@ const nightsBetween = (a, b) =>
 
     (Date.parse(b) - Date.parse(a)) / 86400000;
 
-/* TABELA E REZERVIMEVE SIPAS VILLES */
+/* TABELA E REZERVIMEVE */
 
 function updateOverview() {
 
@@ -1999,6 +2251,26 @@ function updateOverview() {
 
         });
 
+        /* KLIKIMI MBI REZERVIMIN NE TABELE */
+
+        row.style.cursor = "pointer";
+
+        row.onclick = () => {
+
+            $("villaOverview").close();
+
+            openForm(
+
+                Number(b.villa),
+
+                b.arrival,
+
+                b
+
+            );
+
+        };
+
     }
 
     $("overviewNights").textContent = occupied;
@@ -2019,27 +2291,23 @@ function updateOverview() {
 
 }
 
-/* KLIKIMI MBI VILLA 1 - VILLA 8 */
+/* HAPJA E TABELES */
 
-$("calendar").addEventListener("click", e => {
+function openVillaOverview(v) {
 
-    const h = e.target.closest("th");
+    if (!ready) return;
 
-    const match = h?.textContent
-
-        .trim()
-
-        .match(/^Villa\s+([1-8])$/);
-
-    if (!match || !ready) return;
-
-    overviewVilla = Number(match[1]);
+    overviewVilla = v;
 
     updateOverview();
 
-    $("villaOverview").showModal();
+    if (!$("villaOverview").open) {
 
-});
+        $("villaOverview").showModal();
+
+    }
+
+}
 
 /* MBYLLJA E TABELES */
 
